@@ -1,50 +1,47 @@
-import http from "@/libs/axios";
+import http from '@/libs/axios';
 
-
-
-export function getShopList(query) {
+export function getShopList(params) {
   return http({
-    url: "/marked/marked/",
-    method: "get",
-    params: query
-  })
+    url: '/marked/marked/',
+    method: 'get',
+    params,
+  });
 }
 export function getOneShopList(id) {
   return http({
     url: `/marked/marked/${id}/`,
-    method: "get",
-  })
+    method: 'get',
+  });
 }
 
 export function createShopList(data) {
   return http({
-    url: "/marked/marked/",
-    method: "post",
-    data
-  })
+    url: '/marked/marked/',
+    method: 'post',
+    data,
+  });
 }
 
 export function editShopList(data) {
   return http({
     url: `/marked/marked/${data.id}/`,
-    method: "patch",
-    data
-  })
+    method: 'patch',
+    data,
+  });
 }
 
 export function deleteShopList(data) {
   return http({
     url: `/marked/marked/${data.id}/`,
-    method: "delete",
-    data
-  })
+    method: 'delete',
+    data,
+  });
 }
-
 
 export function getShopList2(query) {
   return http({
-    url: "/shoplist/",
-    method: "get",
-    params: query
-  })
+    url: '/shoplist/',
+    method: 'get',
+    params: query,
+  });
 }

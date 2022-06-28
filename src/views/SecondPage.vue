@@ -75,7 +75,7 @@
                       rules="required"
                     >
                       <v-select
-                      selected=""
+                        selected=""
                         v-model="formData.region"
                         :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
                         label="title"
@@ -107,36 +107,36 @@
               </BRow>
 
               <BRow class="mb-1">
-                <BCol >
-                  
-                  
-                    <BButton @click="onOpenWorkingHoursModal" variant="outline-warning" class="btn_hover_warning mb-1">
-                      График работы
-                    </BButton>
-                    
-                  
-                    
-                    <BTable
-                      v-if="formData.work_time.length"
-                      bordered
-                      responsive
-                      :fields="fields"
-                      :items="formData.working_time"
-                      class="text-center"
-                    >
-                    </BTable>
+                <BCol>
+                  <BButton
+                    @click="onOpenWorkingHoursModal"
+                    variant="outline-warning"
+                    class="btn_hover_warning mb-1"
+                  >
+                    График работы
+                  </BButton>
 
-                    <!-- <ValidationProvider
+                  <BTable
+                    v-if="formData.work_time.length"
+                    bordered
+                    responsive
+                    :fields="fields"
+                    :items="formData.working_time"
+                    class="text-center"
+                  >
+                  </BTable>
+
+                  <!-- <ValidationProvider
                       #default="{ errors }"
                       name='"График работы"'
                       rules="required"
                     > -->
-                    <!-- <BFormInput
+                  <!-- <BFormInput
                         placeholder="График работы"
                         v-model="formData.working_hours"
                         v-b-modal.modal-workHours
                       /> -->
-                    <!-- <BFormTags
+                  <!-- <BFormTags
                         placeholder=""
                         v-model="formData.working_hours"
                         remove-on-delete
@@ -165,11 +165,9 @@
         </div>
       </template>
       </BFormTags> -->
-                    
 
-                    <!-- <small class="text-danger">{{ errors[0] }}</small>
+                  <!-- <small class="text-danger">{{ errors[0] }}</small>
                     </ValidationProvider> -->
-                  
                 </BCol>
               </BRow>
               <BRow>
@@ -233,7 +231,7 @@ import SecondaryPhoto from './components/SecondaryPhoto.vue';
 import AddLocationModal from './components/AddLocationModal.vue';
 import AddEditWorkingHours from './components/AddEditWorkingHours.vue';
 import vSelect from 'vue-select';
-import { mapActions,mapGetters } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 
 import {
   BCard,
@@ -325,14 +323,18 @@ export default {
     };
   },
   computed: {
-    ...mapGetters('shopList', ['ONESHOP'])
+    ...mapGetters('shopList', ['ONESHOP']),
   },
 
   mounted() {
-    this.FETCH_ONE_SHOP_LIST()
+    this.fetchOneShopList();
   },
   methods: {
     ...mapActions('shopList', ['EDIT_SHOP_LIST', 'FETCH_ONE_SHOP_LIST']),
+    fetchOneShopList() {
+      let params = this.$route.params.id; //  ты все понимаешь ? не совсем
+      this.FETCH_ONE_SHOP_LIST(params);
+    },
 
     onOpenAddLocationModal() {
       this.$nextTick(() => {

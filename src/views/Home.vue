@@ -15,6 +15,7 @@
           </BCol>
           <BCol>
             <BFormGroup label="Тип:" label-for="basicInput">
+              <!-- aaaaaaaaaaaaaaaaaa -->
               <v-select
                 v-model="selected"
                 :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
@@ -95,7 +96,6 @@
           </div>
         </template>
         <template #cell(work_time)="{ item }">
-          
           <div>
             <BButton
               class="p-50 mr-1"
@@ -108,41 +108,39 @@
         </template>
       </BTable>
       <div class="d-flex justify-content-between flex-wrap">
-      <div class="d-flex align-items-center mb-0 mt-1">
-        <span class="text-nowrap">Показать от 1 до</span>
-        <BFormSelect
-          v-model="filterData.page_size"
-          @input="fetchData"
-          :options="['1', '10', '20', '30']"
-          class="mx-1"
-        />
-        <span class="text-nowrap">
-          строк
-        </span>
-        <!-- из {{ props.total }} -->
+        <div class="d-flex align-items-center mb-0 mt-1">
+          <span class="text-nowrap">Показать от 1 до</span>
+          <BFormSelect
+            v-model="filterData.page_size"
+            @input="fetchData"
+            :options="[10, 20, 30]"
+            class="mx-1"
+          />
+          <span class="text-nowrap"> строк </span>
+          <!-- из {{ props.total }} -->
+        </div>
+        <div>
+          <BPagination
+            v-model="filterData.page"
+            :total-rows="SHOPLIST.count"
+            :per-page="filterData.page_size"
+            first-number
+            last-number
+            align="right"
+            prev-class="prev-item"
+            next-class="next-item"
+            class="mt-1 mb-0"
+            @input="fetchData"
+          >
+            <template #prev-text>
+              <feather-icon icon="ChevronLeftIcon" size="18" />
+            </template>
+            <template #next-text>
+              <feather-icon icon="ChevronRightIcon" size="18" />
+            </template>
+          </BPagination>
+        </div>
       </div>
-      <div>
-        <BPagination
-          v-model="filterData.page"
-          :total-rows="SHOPLIST.count"
-          :per-page="filterData.page_size"
-          first-number
-          last-number
-          align="right"
-          prev-class="prev-item"
-          next-class="next-item"
-          class="mt-1 mb-0"
-          @input="fetchData"
-        >
-          <template #prev-text>
-            <feather-icon icon="ChevronLeftIcon" size="18" />
-          </template>
-          <template #next-text>
-            <feather-icon icon="ChevronRightIcon" size="18" />
-          </template>
-        </BPagination>
-      </div>
-    </div>
     </BCard>
 
     <AddShopName />
@@ -209,7 +207,10 @@ export default {
           end_time: '',
         },
       ],
-      option: [{ title: 'С кешбэком' }, { title: 'Без кешбэка' }],
+      option: [
+        { title: 'С кешбэком', value: '' },
+        { title: 'Без кешбэка', value: '' },
+      ],
       filterData: {
         search: '',
         page: 1,
@@ -270,8 +271,7 @@ export default {
     this.fetchData();
   },
   methods: {
-    ...mapActions('shopList', ['FETCH_SHOP_LIST',
-    'DELETE_SHOP_LIST']),
+    ...mapActions('shopList', ['FETCH_SHOP_LIST', 'DELETE_SHOP_LIST']),
     // ...mapActions ("shopList", [
     //    "EDIT_SHOP_LIST",
     //    "DELETE_SHOP_LIST",
@@ -324,17 +324,18 @@ export default {
         .then((accept) => {
           if (accept) {
             let req = { id: item.id };
-            return this.DELETE_SHOP_LIST(req);
+            this.DELETE_SHOP_LIST(req)
+              .then(() => {
+                // this.$_okToast();
+                // this.fetchData();
+                console.log('Удалено');
+                this.fetchData();
+              })
+              .catch(() => {
+                // this.$_errorToast();
+                console.log('Неудача');
+              });
           }
-        })
-        .then(() => {
-          // this.$_okToast();
-          // this.fetchData();
-          console.log('Удалено');
-        })
-        .catch(() => {
-          // this.$_errorToast();
-          console.log('Неудача');
         });
     },
   },
