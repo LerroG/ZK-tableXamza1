@@ -1,8 +1,14 @@
 <template>
   <div>
-    <BModal id="modal-workHours" no-close-on-backdrop centered @ok="onSubmit">
+    <BModal
+      id="modal-workHours"
+      no-close-on-backdrop
+      centered
+      @ok="onSubmit"
+      @show="setLocaleWeek"
+    >
       <BRow
-        v-for="(day, index) in week"
+        v-for="(day, index) in localeWeek"
         :key="index"
         class="d-flex justify-content-between mb-1"
       >
@@ -16,7 +22,7 @@
             <BFormTimepicker
               placeholder=""
               v-if="day.is_active"
-              v-model="day.start"
+              v-model="day.start_time"
             />
             <BFormTimepicker placeholder="" disabled v-else />
           </BCol>
@@ -24,7 +30,7 @@
             <BFormTimepicker
               placeholder=""
               v-if="day.is_active"
-              v-model="day.end"
+              v-model="day.end_time"
             />
             <BFormTimepicker placeholder="" disabled v-else />
           </BCol>
@@ -35,6 +41,7 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex';
 import {
   BModal,
   BRow,
@@ -55,61 +62,35 @@ export default {
     BFormGroup,
     vSelect,
   },
+  props: {
+    week: {
+      type: Array,
+      default() {
+        return [
+          {
+            is_active: true,
+            title: '',
+            start_time: '',
+            end_time: '',
+          },
+        ];
+      },
+    },
+  },
+
   data() {
     return {
       workDays: {},
-      week: [
-        {
-          is_active: true,
-          title: 'Понедельник',
-          start_time: '00:00:00',
-          end_time: '00:00:00',
-        },
-        {
-          is_active: true,
-          title: 'Вторник',
-          start_time: '00:00:00',
-          end_time: '00:00:00',
-        },
-        { is_active: true, title: 'Среда', start: '00:00:00', end: '00:00:00' },
-        {
-          is_active: true,
-          title: 'Четверг',
-          start_time: '00:00:00',
-          end_time: '00:00:00',
-        },
-        {
-          is_active: true,
-          title: 'Пятница',
-          start_time: '00:00:00',
-          end_time: '00:00:00',
-        },
-        {
-          is_active: true,
-          title: 'Суббота',
-          start_time: '00:00:00',
-          end_time: '00:00:00',
-        },
-        {
-          is_active: true,
-          title: 'Воскресенье',
-          start_time: '00:00:00',
-          end_time: '00:00:00',
-        },
-      ],
+      localeWeek: [],
     };
   },
+  mounted() {},
   methods: {
     onSubmit() {
-      let times;
-      
-        times = this.week.filter((item) => item.is_active);
-
-        // times.push(this.workDays);
-        // this.workDays = times
-        let context = times
-      
-      this.$emit('workDays', context);
+      this.$emit('workDays', this.localeWeek);
+    },
+    setLocaleWeek() {
+      this.localeWeek = JSON.parse(JSON.stringify(this.week));
     },
   },
 };

@@ -47,6 +47,7 @@ title: '',
     async saveEdit() {
       
       let {
+        
         title,
         main_photo,
         second_photo,
@@ -59,7 +60,7 @@ title: '',
       } = this.formData
       
       let req = {
-        id,
+        
         title,
         main_photo,
         second_photo,
@@ -71,9 +72,10 @@ title: '',
         phones,
       }
       this.ADD_SHOP_LIST(req)
-      .then((id) => {
-       this.$router.push(`/second-page/${id}`); 
-      console.log("OK") 
+      .then((req) => {
+        
+       this.$router.push(`/second-page/${req.data.id}`); 
+      console.log(req) 
       })
       .catch((err) => {
 console.log(err)

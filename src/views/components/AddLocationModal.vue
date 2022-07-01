@@ -58,6 +58,15 @@ export default {
     BContainer,
   },
   name: 'MapComponent',
+  props: {
+    marker: {
+      type: Object,
+      default: () => ({
+        lat: '',
+        lng: ''
+      })
+    }
+  },
   data() {
     return {
       url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -65,12 +74,9 @@ export default {
       zoom: 11,
       center: [41.29965, 69.24577],
       bounds: null,
-      markers: [],
+      
 
-      marker: {
-        lat: 41.317737,
-        lng: 69.245707,
-      },
+      
     };
   },
   methods: {

@@ -2,41 +2,31 @@
   <div>
     <BCard>
       <BRow class="d-flex justify-content-between align-items-center">
-        <BCol class="d-flex justify-content-left align-items-center" cols="6">
-          <BCol>
-            <BFormGroup label="Название:" label-for="basicInput">
-              <BFormInput
-                id="basicInput"
-                v-model="filterData.search"
-                @input="fetchData"
-                placeholder="Введите название"
-              />
-            </BFormGroup>
-          </BCol>
-          <BCol>
-            <BFormGroup label="Тип:" label-for="basicInput">
-              <!-- aaaaaaaaaaaaaaaaaa -->
-              <v-select
-                v-model="selected"
-                :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
-                label="title"
-                :options="option"
-              />
-            </BFormGroup>
-          </BCol>
-          <!-- <BCol cols="2">
-            <BButton
-              variant="secondary"
-              class="btn-sm form-control mt-25 p-50"
-              @click="handleEmpty"
-              style="width: 40px"
-            >
-              <FeatherIcon icon="XIcon" size="22" />
-            </BButton>
-          </BCol> -->
+        <BCol cols="12" md="6" xl="3">
+          <BFormGroup>
+            <label>{{ $t('references.home.search') }}</label>
+            <BFormInput
+              id="basicInput"
+              v-model="filterData.search"
+              @input="fetchData"
+              placeholder="Поиск"
+            />
+          </BFormGroup>
         </BCol>
-
-        <BCol :cols="3" class="d-flex justify-content-end mt-25">
+        <BCol cols="12" md="6" xl="3">
+          <BFormGroup>
+            <label>{{ $t('references.home.type_cashback') }}</label>
+            <v-select
+              v-model="filterData.cash"
+              :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
+              label="title"
+              :options="option"
+              @input="fetchData"
+              :reduce="(f) => f.value"
+            />
+          </BFormGroup>
+        </BCol>
+        <BCol cols="12" md class="d-flex justify-content-end mt-25">
           <BButton
             variant="outline-success"
             class="btn_hover_success"
@@ -58,13 +48,12 @@
       >
         <template #cell(main_photo)>
           <b-avatar
-            v-if="SHOPLIST.results.main_photo"
             :src="SHOPLIST.results.main_photo"
             rounded
             class="main_image"
           />
-          <b-avatar v-else rounded class="main_image" />
         </template>
+        <template #cell(phones)> </template>
         <template #cell(actions)="props">
           <div>
             <BButton
@@ -141,11 +130,10 @@
           </BPagination>
         </div>
       </div>
+      <AddShopName />
+      <LocationModal :marker="localtion" />
+      <WorkingHours :items="working_time_table" />
     </BCard>
-
-    <AddShopName />
-    <LocationModal :marker="localtion" />
-    <WorkingHours :items="working_time_table" />
 
     <!-- :marker = "location" -->
   </div>
@@ -171,12 +159,12 @@ import {
   BTable,
   BPagination,
   BAvatar,
+  BContainer,
 } from 'bootstrap-vue';
 
 export default {
   components: {
     BCard,
-
     BRow,
     BCol,
     BFormGroup,
@@ -186,6 +174,7 @@ export default {
     BTable,
     BPagination,
     BAvatar,
+    BContainer,
     vSelect,
     AddShopName,
     LocationModal,
@@ -208,13 +197,14 @@ export default {
         },
       ],
       option: [
-        { title: 'С кешбэком', value: '' },
-        { title: 'Без кешбэка', value: '' },
+        { title: 'С кешбэком', value: true },
+        { title: 'Без кешбэка', value: false },
       ],
       filterData: {
         search: '',
         page: 1,
         page_size: 10,
+        cash: true,
       },
       fields: [
         {
@@ -233,11 +223,11 @@ export default {
           sortable: true,
         },
         {
-          key: 'region',
+          key: 'region.uz',
           label: 'Район',
         },
         {
-          key: 'address',
+          key: 'address.uz',
           label: 'Адрес',
         },
         {
@@ -267,29 +257,31 @@ export default {
     ...mapGetters('shopList', ['SHOPLIST']),
   },
   mounted() {
-    // this.FETCH_SHOP_LIST();
     this.fetchData();
   },
   methods: {
     ...mapActions('shopList', ['FETCH_SHOP_LIST', 'DELETE_SHOP_LIST']),
-    // ...mapActions ("shopList", [
-    //    "EDIT_SHOP_LIST",
-    //    "DELETE_SHOP_LIST",
-    // ])
-    // handleEmpty() {
-    //   (this.filterData.search = ''), (this.selected = null), true;
-    // },
-    fetchData() {
-      let { search, page, page_size } = this.filterData;
-      let req = { search, page, page_size };
+  
+    fetchData() {  //Фильтры
+      let { search,
+      page,
+      page_size,
+      cash } = this.filterData;
+
+      let req = {
+        search,
+        page,
+        page_size,
+        cash,
+      };
 
       clearTimeout(this.timer);
       this.timer = setTimeout(() => {
         this.FETCH_SHOP_LIST(req);
       }, 500);
     },
-    editData(id) {
-      this.$router.push(`/second-page/${id}`);
+    editData(item) {
+      this.$router.push(`/second-page/${item.id}`);
     },
     onOpenLocationModal(e) {
       this.localtion = e;
@@ -298,7 +290,6 @@ export default {
       });
     },
     onOpenWorkingHoursModal(e) {
-      console.log('onOpenWorkingHoursModal', e);
       this.working_time_table = e;
       this.$nextTick(() => {
         this.$bvModal.show('modal-workingHours');

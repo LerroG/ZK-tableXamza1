@@ -1,13 +1,14 @@
 <template>
   <BContainer class="mt-2">
-    <BImg id="main_img" fluid :src="dataAvatar" thumbnail />
+    <BImg id="main_img" fluid :src="dataAvatar" v-if="dataAvatar" />
+    <BImg id="main_img" fluid :src="dataAvatar" v-else />
     <BRow class="d-flex justify-content-between">
       <!-- <BButton @click="upload">asdasd</BButton> -->
       <BCol>
         <div class="mt-1 flex-wrap mb-1">
           <BFormFile
-            style="width: 70%"
-            v-model="formData.main_photo"
+            style="width: 100%"
+            v-model="main_photo"
             placeholder="Имя файла"
             browseText="Выбрать"
             @input="fileInput"
@@ -29,9 +30,9 @@
         placeholder="Имя файла"
         browseText="Выбрать"
         
-      />
+      /> -->
 
-      <b-button variant="danger" class="mt-1" @click="upload">upload</b-button></BCol> -->
+    <!-- <b-button variant="danger" class="mt-1" @click="upload">upload</b-button> -->
   </BContainer>
 </template>
 
@@ -61,15 +62,18 @@ export default {
   },
   data() {
     return {
-      dataAvatar: '',
-      formData: {
-        main_photo: null,
-      },
+      main_photo: '',
     };
   },
+  props: {
+    type: Object,
+    dataAvatar: {
+      default: () => ({}),
+    },
+  },
   watch: {
-    'formData.main_photo'(value) {
-      this.$emit('changeMain', this.formData);
+    main_photo(value) {
+      this.$emit('changeMain', this.main_photo);
     },
   },
   methods: {
@@ -83,20 +87,28 @@ export default {
       this.dataAvatar = null;
       this.formData.main_photo = null;
     },
-    async upload() {
-      let { main_photo } = this.formData;
-      let req = new FormData();
-      req.append('main_photo', main_photo);
-      this.ADD_SHOP_LIST(req)
-        .then(() => {
-          console.log('Не сосать');
-        })
-        .catch(() => {
-          console.log('Cосать');
-        })
-    },
+    // upload() {
+    //   // this.$emit('changeMain', this.main_photo);
+    //   // let { main_photo } = this.formData;
+    //   // let req = new FormData();
+    //   // req.append('main_photo', main_photo);
+    //   // console.log(req);
+    //   // this.ADD_SHOP_LIST(req)
+    //   //   .then(() => {
+    //   //     console.log('Не сосать');
+    //   //   })
+    //   //   .catch(() => {
+    //   //     console.log('Cосать');
+    //   //   })
+    // },
   },
 };
 </script>
 
-<style></style>
+<style>
+#main_img {
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+}
+</style>

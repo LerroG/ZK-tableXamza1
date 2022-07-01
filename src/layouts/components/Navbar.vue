@@ -17,8 +17,11 @@
     </ul>
 
     <!-- Left Col -->
-    <div class="bookmark-wrapper align-items-center flex-grow-1 d-none d-lg-flex">
-      <dark-Toggler class="d-none d-lg-block" />
+    <div class="bookmark-wrapper align-items-center flex-grow-1  d-none d-flex justify-content-end">
+      <dark-Toggler class="d-none d-lg-block d-md-block d-sm-block " />
+    <div class="nav d-flex">
+        <locale />
+      </div>
     </div>
 
     <b-navbar-nav class="nav align-items-center ml-auto">
@@ -100,6 +103,7 @@ import {
   BLink, BNavbarNav, BNavItemDropdown, BDropdownItem, BDropdownDivider, BAvatar,
 } from 'bootstrap-vue'
 import DarkToggler from '@core/layouts/components/app-navbar/components/DarkToggler.vue'
+import Locale from "@/@core/layouts/components/app-navbar/components/Locale.vue";
 
 export default {
   components: {
@@ -112,6 +116,7 @@ export default {
 
     // Navbar Components
     DarkToggler,
+    Locale,
   },
   props: {
     toggleVerticalMenuActive: {

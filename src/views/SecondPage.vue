@@ -1,23 +1,25 @@
 <template>
   <div>
     <BCard>
-      <ValidationObserver v-slot="{ handleSubmit }">
-        <BForm @submit.prevent="handleSubmit()">
+      <ValidationObserver>
+        <BForm>
           <BRow class="d-flex justify-content-between mt-3" cols="12" xl="12">
             <BCol cols="12" md="12" xl="6">
-              <div>
-                <MainPhotoUpload @changeMain="formData.main_photo" />
-              </div>
+              <MainPhotoUpload
+                :dataAvatar="formData.main_photo"
+                @changeMain="setMainPhoto"
+              />
+
               <BRow class="mt-3 mb-3">
                 <BCol class="d-flex justify-content-start">
-                  <SecondaryPhoto @changeSecond="formData.second_photo" />
+                  <!-- <SecondaryPhoto :formData="formData.second_photo" @changeSecond="formData.second_photo" /> -->
                 </BCol>
               </BRow>
             </BCol>
 
             <BCol xl="6">
               <BRow>
-                <BCol>
+                <BCol cols="8">
                   <BFormGroup label="Тип:">
                     <ValidationProvider
                       #default="{ errors }"
@@ -29,13 +31,14 @@
                         :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
                         label="title"
                         :options="option"
+                        :reduce="(option) => option.value"
                       />
 
                       <small class="text-danger">{{ errors[0] }}</small>
                     </ValidationProvider>
                   </BFormGroup>
                 </BCol>
-                <BCol class="d-flex justify-content-end" cols="2">
+                <BCol class="d-flex justify-content-end" col>
                   <BFormGroup>
                     <label style="font-size: 14px">Локация:</label><br />
 
@@ -59,7 +62,7 @@
                       <BFormInput
                         size="lg"
                         placeholder="Название"
-                        v-model="ONESHOP.title"
+                        v-model="formData.title"
                       />
                       <small class="text-danger">{{ errors[0] }}</small>
                     </ValidationProvider>
@@ -107,67 +110,23 @@
               </BRow>
 
               <BRow class="mb-1">
-                <BCol>
+                <BCol cols="12">
                   <BButton
                     @click="onOpenWorkingHoursModal"
                     variant="outline-warning"
                     class="btn_hover_warning mb-1"
                   >
-                    График работы
+                    Время работы
                   </BButton>
 
                   <BTable
                     v-if="formData.work_time.length"
                     bordered
-                    responsive
                     :fields="fields"
-                    :items="formData.working_time"
+                    :items="getActiveWorkingDayList"
                     class="text-center"
                   >
                   </BTable>
-
-                  <!-- <ValidationProvider
-                      #default="{ errors }"
-                      name='"График работы"'
-                      rules="required"
-                    > -->
-                  <!-- <BFormInput
-                        placeholder="График работы"
-                        v-model="formData.working_hours"
-                        v-b-modal.modal-workHours
-                      /> -->
-                  <!-- <BFormTags
-                        placeholder=""
-                        v-model="formData.working_hours"
-                        remove-on-delete
-                        
-                        
-                      >
-                      <template v-slot="{ tags, inputAttrs, inputHandlers, tagVariant, removeTag }">
-        <b-input-group class="mb-2">
-          <b-form-input
-            v-bind="inputAttrs"
-            v-on="inputHandlers"
-            placeholder="New tag - Press enter to add"
-            class="form-control"
-          ></b-form-input>
-          
-        </b-input-group>
-        <div class="d-inline-block" style="font-size: 1.5rem;">
-          <b-form-tag
-            v-for="tag in tags"
-            @remove="removeTag(tag)"
-            :key="tag"
-            :title="tag"
-            :variant="tagVariant"
-            class="mr-1"
-          >{{ tag }}</b-form-tag>
-        </div>
-      </template>
-      </BFormTags> -->
-
-                  <!-- <small class="text-danger">{{ errors[0] }}</small>
-                    </ValidationProvider> -->
                 </BCol>
               </BRow>
               <BRow>
@@ -191,34 +150,31 @@
               </BRow>
             </BCol>
           </BRow>
-
-          <!-- </BRow>
-          </BCol> -->
-          <!-- </BRow> -->
-          <BRow class="mt-4">
-            <BCol class="d-flex justify-content-end" col>
-              <BButton
-                variant="outline-danger"
-                class="btn_hover_delete"
-                href="/"
-                >Отменить
-              </BButton>
-
-              <BButton
-                type="submit"
-                variant="outline-primary"
-                class="ml-1 btn_hover"
-                @click="submitEdit"
-                >Отправить
-              </BButton>
-            </BCol>
-          </BRow>
+          <AddLocationModal
+            :marker="formData.location"
+            @submit="(latlng) => (formData.location = latlng)"
+          />
+          <AddEditWorkingHours
+            :week="formData.work_time"
+            @workDays="setWorkTime"
+          />
+          <!-- @workDays="(workDays) => (formData.work_time = workDays)" -->
         </BForm>
-        <!-- {{ formData.working_hours }} -->
-        <AddLocationModal @submit="(latlng) => (formData.location = latlng)" />
-        <AddEditWorkingHours
-          @workDays="(workDays) => (formData.working_time = workDays)"
-        />
+        <BRow class="mt-4">
+          <BCol class="d-flex justify-content-end" col>
+            <BButton variant="outline-danger" class="btn_hover_delete" href="/"
+              >Отменить
+            </BButton>
+
+            <BButton
+              type="submit"
+              variant="outline-primary"
+              class="ml-1 btn_hover"
+              @click="onSubmit"
+              >Отправить
+            </BButton>
+          </BCol>
+        </BRow>
       </ValidationObserver>
     </BCard>
   </div>
@@ -232,6 +188,7 @@ import AddLocationModal from './components/AddLocationModal.vue';
 import AddEditWorkingHours from './components/AddEditWorkingHours.vue';
 import vSelect from 'vue-select';
 import { mapActions, mapGetters } from 'vuex';
+import convertToFormdata from './convertFormData.js';
 
 import {
   BCard,
@@ -274,23 +231,26 @@ export default {
   data() {
     return {
       required,
-      email,
-      selected: { title: 'С кешбэком' },
-      option: [{ title: 'С кешбэком' }, { title: 'Без кешбэка' }],
+
+      selected: '',
+      option: [
+        { title: 'С кешбэком', value: true },
+        { title: 'Без кешбэка', value: false },
+      ],
       selected1: { title: 'Алмазарский район' },
       option1: [
-        { title: 'Алмазарский район' },
-        { title: 'Бектемирский район' },
-        { title: 'Мирабадский район' },
-        { title: 'Мирзо-Улугбекский район' },
-        { title: 'Сергелийский район' },
-        { title: 'Учтепинский район' },
-        { title: 'Чиланзарский район' },
-        { title: 'Шайхантахурский район' },
-        { title: 'Юнусабадский район' },
-        { title: 'Яккасарайский район' },
-        { title: 'Янгихаётский район' },
-        { title: 'Яшнабадский район' },
+        {title: 'Алмазарский район'},
+        {title: 'Бектемирский район'},
+        {title: 'Мирабадский район'},
+        {title: 'Мирзо-Улугбекский район'},
+        {title: 'Сергелийский район'},
+        {title: 'Учтепинский район'},
+        {title: 'Чиланзарский район'},
+        {title: 'Шайхантахурский район'},
+        {title: 'Юнусабадский район'},
+        {title: 'Яккасарайский район'},
+        {title: 'Янгихаётский район'},
+        {title: 'Яшнабадский район'},
       ],
 
       fields: [
@@ -299,31 +259,37 @@ export default {
           label: 'День',
         },
         {
-          key: 'start',
+          key: 'start_time',
           label: 'Открытие',
         },
         {
-          key: 'end',
+          key: 'end_time',
           label: 'Закрытие',
         },
       ],
 
       formData: {
-        title: {},
+        title: '',
         work_time: [],
-        location: {},
-        address: {},
+        location: {
+          lat: 41,
+          lng: 69,
+        },
+        address: null,
         phones: [],
-        region: { title: 'Алмазарский район' },
-        cash: { title: 'С кешбэком' },
-        main_photo: {},
+        region: null,
+        cash: '',
+        main_photo: '',
         second_photo: [],
       },
-      // phoneNumbers: [{ phoneNumber: '' }],
     };
   },
   computed: {
     ...mapGetters('shopList', ['ONESHOP']),
+
+    getActiveWorkingDayList() {
+      return this.ONESHOP.work_time.filter((item) => item.is_active);
+    },
   },
 
   mounted() {
@@ -331,9 +297,44 @@ export default {
   },
   methods: {
     ...mapActions('shopList', ['EDIT_SHOP_LIST', 'FETCH_ONE_SHOP_LIST']),
+
+    setMainPhoto(v) {
+      this.formData.main_photo = v;
+    },
+
+    setWorkTime(workDays) {
+      this.ONESHOP.work_time = JSON.parse(JSON.stringify(workDays));
+    },
+
     fetchOneShopList() {
-      let params = this.$route.params.id; //  ты все понимаешь ? не совсем
-      this.FETCH_ONE_SHOP_LIST(params);
+      let id = this.$route.params.id;
+      this.FETCH_ONE_SHOP_LIST(id).then((res) => {
+        let {
+          title,
+          work_time,
+          location,
+          address,
+          phones,
+          region,
+          cash,
+          main_photo,
+          second_photo,
+        } = res.data;
+
+        this.formData = {
+          title,
+          work_time,
+          location,
+          address,
+          phones,
+          region,
+          cash,
+          main_photo,
+          second_photo,
+        };
+
+        // this.formData = JSON.parse(JSON.stringify(this.ONESHOP));
+      });
     },
 
     onOpenAddLocationModal() {
@@ -342,57 +343,50 @@ export default {
       });
     },
     onOpenWorkingHoursModal() {
+      // console.log(this.ONESHOP.work_time);
       this.$nextTick(() => {
         this.$bvModal.show('modal-workHours');
       });
     },
 
-    async submitEdit() {
-      // let {
-      //   title,
-      //   main_image,
-      //   second_image,
-      //   location,
-      //   type,
-      //   district,
-      //   adress,
-      //   working_hours,
-      //   phoneNumbers,
-      // } = this.formData
-      //
-      // let req = {
-      //   title,
-      //   main_image,
-      //   second_image,
-      //   location,
-      //   type,
-      //   district,
-      //   adress,
-      //   working_hours,
-      //   phoneNumbers,
-      // }
-      // this.EDIT_SHOP_LIST(req)
-      // .then(() => {
-      // console.log("OK")
-      // })
-      // .catch((err) => {
-      // console.log("NO")
-      // })
-    },
+    async onSubmit() {
+      let {
+        title,
+        main_photo,
+        second_photo,
+        location,
+        cash,
+        region,
+        address,
+        work_time,
+        phones,
+      } = this.formData;
 
-    // log(v) {
-    //   console.log(v);
-    // },
-    // addRow() {
-    //   let item = {
-    //     phoneNumber: '',
-    //   };
-    //   this.phoneNumbers.push(item);
-    // },
-    // deleteRow(item) {
-    //   //  нужно исправить потом
-    //   this.phoneNumbers.splice(this.phoneNumbers.indexOf(item), 1);
-    // },
+      let req = new FormData();
+      req.append('id', this.$route.params.id);
+      req.append('cash', cash);
+      req.append('title', title);
+      req.append('main_photo', main_photo);
+      req.append('main_photo', main_photo);
+      req.append('main_photo', main_photo);
+      // req.append('second_photo', second_photo)
+      req.append('location.lat', location.lat);
+      req.append('location.lng', location.lng);
+      // req.append('region', region)
+      req.append('address', address);
+      req.append('work_time', work_time);
+      req.append('phones', phones);
+      console.log(this.formData);
+
+      this.EDIT_SHOP_LIST(req)
+        .then(() => {
+          this.$router.push('/');
+          console.log('OK');
+        })
+        .catch((err) => {
+          console.log('NO', err);
+        });
+    },
   },
 };
 </script>

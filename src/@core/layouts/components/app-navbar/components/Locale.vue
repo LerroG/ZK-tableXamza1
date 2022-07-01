@@ -49,24 +49,19 @@ export default {
     /* eslint-disable global-require */
     const locales = [
       {
-        locale: 'en',
-        img: require('@/assets/images/flags/en.png'),
-        name: 'English',
+        locale: "oz",
+        img: require("@/assets/images/flags/uz.png"), // eslint-disable-line global-require
+        name: "Узбек",
       },
       {
-        locale: 'fr',
-        img: require('@/assets/images/flags/fr.png'),
-        name: 'French',
+        locale: "uz",
+        img: require("@/assets/images/flags/uz.png"), // eslint-disable-line global-require
+        name: "O`zbek",
       },
       {
-        locale: 'de',
-        img: require('@/assets/images/flags/de.png'),
-        name: 'German',
-      },
-      {
-        locale: 'pt',
-        img: require('@/assets/images/flags/pt.png'),
-        name: 'Portuguese',
+        locale: "ru",
+        img: require("@/assets/images/flags/ru.png"), // eslint-disable-line global-require
+        name: "Русский",
       },
     ]
     /* eslint-disable global-require */

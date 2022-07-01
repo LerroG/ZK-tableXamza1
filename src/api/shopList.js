@@ -24,7 +24,7 @@ export function createShopList(data) {
 
 export function editShopList(data) {
   return http({
-    url: `/marked/marked/${data.id}/`,
+    url: `/marked/marked/${data.get('id')}/`,
     method: 'patch',
     data,
   });

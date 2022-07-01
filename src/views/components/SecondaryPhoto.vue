@@ -17,7 +17,7 @@
       @select="filesSelected($event)"
       @beforedelete="onBeforeDelete($event)"
       @delete="fileDeleted($event)"
-      v-model="formData.second_photo"
+      v-model="second_photo_model"
     ></VueFileAgent>
 
     <!-- <BButton @click="upload"> Отправить</BButton> -->
@@ -31,7 +31,7 @@
 <script>
 import VueFileAgentStyles from 'vue-file-agent/dist/vue-file-agent.css';
 import { BButton } from 'bootstrap-vue';
-import { mapActions } from 'vuex';
+// import { mapActions } from 'vuex';
 
 export default {
   components: {
@@ -39,45 +39,54 @@ export default {
   },
   data: function () {
     return {
-      formData: {
-        second_photo: [],
-      },
-      uploadUrl: 'http://192.168.31.99:8000/api/v1/marked/marked/',
+      second_photo_model: [],
+      // uploadUrl: 'http://192.168.31.99:8000/api/v1/marked/marked/',
 
-      second_photo: [], // maintain an upload queue
-    };
+        second_photo: [], // maintain an upload queue
+    }
+  },
+  props: {
+    type: Array,
+    second_photo_model:  {
+      
+      default () {
+        return [
+          
+        ]
+      },
+    }
   },
   watch: {
-    'formData.second_photo'(value) {
-      this.$emit('changeSecond', this.formData);
+    'second_photo_model'(value) {
+      this.$emit('changeSecond', this.second_photo_model);
     },
   },
   methods: {
-    ...mapActions('shopList', ['ADD_SHOP_LIST']),
+    // ...mapActions('shopList', ['ADD_SHOP_LIST']),
 
-    async upload() {
-      let { second_photo } = this.formData;
-      let req = new FormData();
-      second_photo.forEach((item) => {
-        req.append('second_photo', item.file);
-      });
-      // req.append('second_photo', second_photo);
-      this.ADD_SHOP_LIST(req)
-        .then(() => {
-          console.log('Успешно');
-        })
-        .catch(() => {
-          console.log('Неудача');
-        });
-    },
-    deleteUploadedFile: function (second_photo) {
-      // Using the default uploader. You may use another uploader instead.
-      this.$refs.vueFileAgent.deleteUpload(
-        this.uploadUrl,
-        this.uploadHeaders,
-        second_photo
-      );
-    },
+    // async upload() {
+    //   let { second_photo } = this.formData;
+    //   let req = new FormData();
+    //   second_photo.forEach((item) => {
+    //     req.append('second_photo', item.file);
+    //   });
+    //   // req.append('second_photo', second_photo);
+    //   this.ADD_SHOP_LIST(req)
+    //     .then(() => {
+    //       console.log('Успешно');
+    //     })
+    //     .catch(() => {
+    //       console.log('Неудача');
+    //     });
+    // },
+    // deleteUploadedFile: function (second_photo) {
+    //   // Using the default uploader. You may use another uploader instead.
+    //   this.$refs.vueFileAgent.deleteUpload(
+    //     this.uploadUrl,
+    //     this.uploadHeaders,
+    //     second_photo
+    //   );
+    // },
     filesSelected: function (fileRecordsNewlySelected) {
       var validFileRecords = fileRecordsNewlySelected.filter(
         (second_photo) => !second_photo.error

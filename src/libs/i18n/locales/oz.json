@@ -1,3 +1,53 @@
 {
-  
+  "references": {
+    "home": {
+    "search": "Кидирмок",
+    "type_cashback": "Тип",
+      "with_cashback": "С кешбэком",
+      "without_cashback": "Без кешбэка",
+      "any_cashback": "Любой",
+      "add": "Добавить",
+      "add_shop": "Добавить магазин",
+      "enter_shopname": "Введите название",
+      "title": "Название",
+      "cancel":"Отмена",
+      "save": "Сохранить",
+      "main_photo": "Фото",
+      "district": "Район",
+      "address": "Адрес",
+      "location": "Локация",
+      "phones": "Телефоны",
+      "work_time": "Время работы",
+      "actions": "Действия",
+      "show": "Показать от 1 до",
+      "pages": "строк"
+    },
+    "second_page": {
+      "almazar_district": "Алмазарский район",
+      "bektemir_district": "Бектемирский район",
+      "mirabad_district": "Мирабадский район",
+      "mirzo_ulug_district": "Мирзо-Улугбекский район",
+      "sergeli_district": "Сергелийский район",
+      "uchtepa_district": "Учтепинский район",
+      "chilanzar_district": "Чиланзарский район",
+      "shayhantahun_district": "Шайхантахурский район",
+      "yunusabad_district": "Юнусабадский район",
+      "yakkasaray_district": "Яккасарайский район",
+      "yangihayot_district": "Янгихаётский район",
+      "yashnabad_district": "Яшнабадский район",
+      "phone_number":"Номер телефона",
+      "submit":"Отправить",
+      "file_name":"Имя файла",
+      "select":"Выбрать"
+    },
+    "work_time": {
+      "monday":"Понедельник",
+      "":"Вторник",
+      "":"Среда",
+      "":"Четверг",
+      "friday":"Пятница",
+      "saturday":"Суббота",
+      "sunday":"Воскресенье"
+    }
+  }
 }
