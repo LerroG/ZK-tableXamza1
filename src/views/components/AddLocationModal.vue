@@ -62,8 +62,8 @@ export default {
     marker: {
       type: Object,
       default: () => ({
-        lat: '',
-        lng: ''
+        lat: 49.1231231,
+        lng: 61.123123
       })
     }
   },

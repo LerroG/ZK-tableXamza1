@@ -7,12 +7,17 @@
             <BCol cols="12" md="12" xl="6">
               <MainPhotoUpload
                 :dataAvatar="formData.main_photo"
+                :main_photo="formData.main_photo"
                 @changeMain="setMainPhoto"
               />
 
               <BRow class="mt-3 mb-3">
                 <BCol class="d-flex justify-content-start">
-                  <!-- <SecondaryPhoto :formData="formData.second_photo" @changeSecond="formData.second_photo" /> -->
+                  
+                  <SecondaryPhoto :fileRecords="formData.second_photo"  />
+                  <div v-for="(photo,index) in this.formData.second_photo" :key="index">
+                    {{photo}}
+                  </div>
                 </BCol>
               </BRow>
             </BCol>
@@ -20,7 +25,8 @@
             <BCol xl="6">
               <BRow>
                 <BCol cols="8">
-                  <BFormGroup label="Тип:">
+                  <BFormGroup>
+                    <label>{{ $t('references.home.type_cashback') }}:</label>
                     <ValidationProvider
                       #default="{ errors }"
                       name='"Тип"'
@@ -29,9 +35,8 @@
                       <v-select
                         v-model="formData.cash"
                         :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
-                        label="title"
+                        :label="$i18n.locale"
                         :options="option"
-                        :reduce="(option) => option.value"
                       />
 
                       <small class="text-danger">{{ errors[0] }}</small>
@@ -40,7 +45,8 @@
                 </BCol>
                 <BCol class="d-flex justify-content-end" col>
                   <BFormGroup>
-                    <label style="font-size: 14px">Локация:</label><br />
+                    <label style="font-size: 14px">{{ $t('references.home.location')}}:
+                      </label><br />
 
                     <BButton
                       style="width: 70px"
@@ -53,7 +59,8 @@
               </BRow>
               <BRow>
                 <BCol>
-                  <BFormGroup label="Название:">
+                  <BFormGroup>
+                    <label>{{ $t('references.home.title') }}:</label>
                     <ValidationProvider
                       #default="{ errors }"
                       name='"Название"'
@@ -61,7 +68,7 @@
                     >
                       <BFormInput
                         size="lg"
-                        placeholder="Название"
+                        :placeholder="$t('references.home.title')"
                         v-model="formData.title"
                       />
                       <small class="text-danger">{{ errors[0] }}</small>
@@ -71,40 +78,53 @@
               </BRow>
               <BRow>
                 <BCol>
-                  <BFormGroup label="Район:">
+                  <BFormGroup>
+                    <label>{{ $t('references.home.district') }}:</label>
                     <ValidationProvider
                       #default="{ errors }"
                       name='"Район"'
                       rules="required"
                     >
                       <v-select
-                        selected=""
                         v-model="formData.region"
                         :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
-                        label="title"
-                        :options="option1"
+                        :label="$i18n.locale"
+                        :options="getRegion"
+                        :reduce="(getRegion) => getRegion.id"
+                        :getOptionLabel="(v) => v.name && v.name[$i18n.locale] || ''"
+                        
                       />
+                      
                       <small class="text-danger">{{ errors[0] }}</small>
                     </ValidationProvider>
                   </BFormGroup>
                 </BCol>
+                
               </BRow>
               <BRow class="mb-1">
                 <BCol>
-                  <BFormGroup label="Адрес:">
+                  <BFormGroup>
+                    <label>{{ $t('references.home.address') }}:</label>
+                    <BTabs>
+                    <BTab
+                    :title="lang.toUpperCase()"
+                    v-for="(lang, index) in getLangs"
+                    :key="index"
+                    >
                     <ValidationProvider
                       #default="{ errors }"
                       name='"Адрес"'
                       rules="required"
                     >
                       <BFormTextarea
-                        v-model="formData.address"
+                        v-model="formData.address[lang]"
                         id="textarea-default"
-                        placeholder="Адрес"
                         rows="3"
                       />
                       <small class="text-danger">{{ errors[0] }}</small>
                     </ValidationProvider>
+                      </BTab>
+                    </BTabs>
                   </BFormGroup>
                 </BCol>
               </BRow>
@@ -116,11 +136,19 @@
                     variant="outline-warning"
                     class="btn_hover_warning mb-1"
                   >
-                    Время работы
+                    {{$t('references.home.work_time')}}
                   </BButton>
 
                   <BTable
-                    v-if="formData.work_time.length"
+                    v-if="formData.work_time.length == 7"
+                    bordered
+                    :fields="fields"
+                    :items="getActiveWorkingDayList"
+                    class="text-center"
+                  >
+                  </BTable>
+                  <BTable
+                    v-else
                     bordered
                     :fields="fields"
                     :items="getActiveWorkingDayList"
@@ -154,10 +182,18 @@
             :marker="formData.location"
             @submit="(latlng) => (formData.location = latlng)"
           />
-          <AddEditWorkingHours
+          <div>
+          <EditWorkingHours
+          v-if="formData.work_time.length == 7"
             :week="formData.work_time"
             @workDays="setWorkTime"
           />
+          <AddWorkingHours
+          v-else
+            
+            @workDays="setWorkTime"
+          />
+          </div>
           <!-- @workDays="(workDays) => (formData.work_time = workDays)" -->
         </BForm>
         <BRow class="mt-4">
@@ -185,7 +221,8 @@ import { required, email } from '@validations';
 import MainPhotoUpload from './components/MainPhotoUpload.vue';
 import SecondaryPhoto from './components/SecondaryPhoto.vue';
 import AddLocationModal from './components/AddLocationModal.vue';
-import AddEditWorkingHours from './components/AddEditWorkingHours.vue';
+import EditWorkingHours from './components/EditWorkingHours.vue';
+import AddWorkingHours from './components/AddWorkingHours.vue';
 import vSelect from 'vue-select';
 import { mapActions, mapGetters } from 'vuex';
 import convertToFormdata from './convertFormData.js';
@@ -204,6 +241,8 @@ import {
   BInputGroup,
   BFormTag,
   BTable,
+  BTab,
+  BTabs,
 } from 'bootstrap-vue';
 import { title } from '@/@core/utils/filter';
 
@@ -222,7 +261,10 @@ export default {
     BInputGroup,
     BFormTag,
     BTable,
-    AddEditWorkingHours,
+    BTab,
+    BTabs,
+    EditWorkingHours,
+    AddWorkingHours,
     vSelect,
     MainPhotoUpload,
     SecondaryPhoto,
@@ -231,28 +273,10 @@ export default {
   data() {
     return {
       required,
-
-      selected: '',
       option: [
-        { title: 'С кешбэком', value: true },
-        { title: 'Без кешбэка', value: false },
+        { ru: 'С кешбэком', uz: 'Cashback bilan', value: true },
+        { ru: 'Без кешбэка', uz: "Keshbek yo'q", value: false },
       ],
-      selected1: { title: 'Алмазарский район' },
-      option1: [
-        {title: 'Алмазарский район'},
-        {title: 'Бектемирский район'},
-        {title: 'Мирабадский район'},
-        {title: 'Мирзо-Улугбекский район'},
-        {title: 'Сергелийский район'},
-        {title: 'Учтепинский район'},
-        {title: 'Чиланзарский район'},
-        {title: 'Шайхантахурский район'},
-        {title: 'Юнусабадский район'},
-        {title: 'Яккасарайский район'},
-        {title: 'Янгихаётский район'},
-        {title: 'Яшнабадский район'},
-      ],
-
       fields: [
         {
           key: 'title',
@@ -275,35 +299,43 @@ export default {
           lat: 41,
           lng: 69,
         },
-        address: null,
+        address: {},
         phones: [],
         region: null,
-        cash: '',
-        main_photo: '',
+        cash: {},
+        main_photo: null,
         second_photo: [],
       },
     };
   },
   computed: {
-    ...mapGetters('shopList', ['ONESHOP']),
+    ...mapGetters('shopList', ['ONESHOP', 'SHOPREGION']),
+
+    getLangs() {
+      return ["ru", "uz"];
+    },
 
     getActiveWorkingDayList() {
-      return this.ONESHOP.work_time.filter((item) => item.is_active);
+      return this.formData.work_time.filter((item) => item.is_active);
     },
+    getRegion() {
+      return this.SHOPREGION.results
+    }
   },
 
   mounted() {
     this.fetchOneShopList();
+    this.FETCH_SHOP_REGION();
   },
   methods: {
-    ...mapActions('shopList', ['EDIT_SHOP_LIST', 'FETCH_ONE_SHOP_LIST']),
+    ...mapActions('shopList', ['EDIT_SHOP_LIST', 'FETCH_ONE_SHOP_LIST', 'FETCH_SHOP_REGION']),
 
     setMainPhoto(v) {
       this.formData.main_photo = v;
     },
 
     setWorkTime(workDays) {
-      this.ONESHOP.work_time = JSON.parse(JSON.stringify(workDays));
+      this.formData.work_time = JSON.parse(JSON.stringify(workDays));
     },
 
     fetchOneShopList() {
@@ -319,7 +351,7 @@ export default {
           cash,
           main_photo,
           second_photo,
-        } = res.data;
+        } = res;
 
         this.formData = {
           title,
@@ -327,7 +359,7 @@ export default {
           location,
           address,
           phones,
-          region,
+          region: region.id,
           cash,
           main_photo,
           second_photo,
@@ -344,6 +376,7 @@ export default {
     },
     onOpenWorkingHoursModal() {
       // console.log(this.ONESHOP.work_time);
+      console.log(this.cash)
       this.$nextTick(() => {
         this.$bvModal.show('modal-workHours');
       });
@@ -364,19 +397,36 @@ export default {
 
       let req = new FormData();
       req.append('id', this.$route.params.id);
-      req.append('cash', cash);
-      req.append('title', title);
-      req.append('main_photo', main_photo);
-      req.append('main_photo', main_photo);
-      req.append('main_photo', main_photo);
+      
       // req.append('second_photo', second_photo)
-      req.append('location.lat', location.lat);
-      req.append('location.lng', location.lng);
-      // req.append('region', region)
-      req.append('address', address);
-      req.append('work_time', work_time);
-      req.append('phones', phones);
-      console.log(this.formData);
+      
+
+      // console.log(work_time);
+      // work_time.forEach((item) => {
+        //   req.append('work_time', JSON.stringify(item))
+      // });
+      // phones.forEach((item) => {
+        //   req.append('phones', item);
+      //   console.log(item)
+      // });
+        // req.append('location.lat', location.lat);
+        // req.append('location.lng', location.lng);
+      if (typeof(second_photo) != "string" && second_photo.lenght) {
+        second_photo.forEach((item) => {
+          req.append('second_photo', item.file);
+      })
+      }
+      if (typeof(main_photo) != "string" && main_photo != null){
+        req.append('main_photo', main_photo);
+        }
+        req.append('cash', cash.value);
+        req.append('title', title);
+        req.append('address', JSON.stringify(address));
+        req.append('region', region)
+        req.append('location', JSON.stringify(location));
+        req.append('work_time', JSON.stringify(work_time));
+      req.append('phones', JSON.stringify(phones));
+      console.log(this.cash);
 
       this.EDIT_SHOP_LIST(req)
         .then(() => {

@@ -7,7 +7,7 @@
       centered
       size="lg"
       ok-only
-      ok-title="Назад"
+      :ok-title="$t('references.home.back')"
       
     >
       <div style="height: 60vh; width: 10wh">

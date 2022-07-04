@@ -48,15 +48,15 @@ export default {
   setup() {
     /* eslint-disable global-require */
     const locales = [
-      {
-        locale: "oz",
-        img: require("@/assets/images/flags/uz.png"), // eslint-disable-line global-require
-        name: "Узбек",
-      },
+      // {
+      //   locale: "oz",
+      //   img: require("@/assets/images/flags/uz.png"), // eslint-disable-line global-require
+      //   name: "Узбек",
+      // },
       {
         locale: "uz",
         img: require("@/assets/images/flags/uz.png"), // eslint-disable-line global-require
-        name: "O`zbek",
+        name: "Uzbek",
       },
       {
         locale: "ru",

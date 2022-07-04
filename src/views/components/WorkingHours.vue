@@ -6,9 +6,9 @@
       centered
       size="lg"
       ok-only
-      ok-title="Назад"
+      :ok-title="$t('references.home.back')"
     >
-      <BTable :fields="fields" :items="items" class="text-center"> </BTable>
+      <BTable :fields="fields" :items="getActiveWorkingDayList" class="text-center"> </BTable>
       
     </BModal>
   </div>
@@ -58,7 +58,11 @@ export default {
     };
   },
 
-  methods: {},
+  methods: {
+    getActiveWorkingDayList() {
+      return this.items.filter((item) => item.is_active);
+    },
+  },
 };
 </script>
 

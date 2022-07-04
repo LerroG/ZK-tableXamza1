@@ -4,6 +4,7 @@
       id="modal-workHours"
       no-close-on-backdrop
       centered
+      :ok-title="$t('references.home.save')"
       @ok="onSubmit"
       @show="setLocaleWeek"
     >
@@ -37,11 +38,11 @@
         </BCol>
       </BRow>
     </BModal>
+    
   </div>
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
 import {
   BModal,
   BRow,

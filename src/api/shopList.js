@@ -38,10 +38,12 @@ export function deleteShopList(data) {
   });
 }
 
-export function getShopList2(query) {
+export function getShopRegion(params) {
   return http({
-    url: '/shoplist/',
+    url: '/marked/region/',
     method: 'get',
-    params: query,
+    params
   });
 }
+
+

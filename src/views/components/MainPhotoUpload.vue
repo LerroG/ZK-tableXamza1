@@ -62,12 +62,16 @@ export default {
   },
   data() {
     return {
-      main_photo: '',
+      // main_photo: null,
     };
   },
   props: {
     type: Object,
     dataAvatar: {
+      default: () => ({}),
+    },
+    type: Object,
+    main_photo: {
       default: () => ({}),
     },
   },

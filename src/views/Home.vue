@@ -7,9 +7,9 @@
             <label>{{ $t('references.home.search') }}</label>
             <BFormInput
               id="basicInput"
-              v-model="filterData.search"
+              v-model="filterData.title"
               @input="fetchData"
-              placeholder="Поиск"
+              :placeholder="$t('references.home.search')"
             />
           </BFormGroup>
         </BCol>
@@ -19,7 +19,7 @@
             <v-select
               v-model="filterData.cash"
               :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
-              label="title"
+              :label="$i18n.locale"
               :options="option"
               @input="fetchData"
               :reduce="(f) => f.value"
@@ -32,7 +32,7 @@
             class="btn_hover_success"
             @click="onOpenAddShopName"
           >
-            Добавить
+            {{$t('references.home.add')}}
           </BButton>
         </BCol>
       </BRow>
@@ -53,7 +53,20 @@
             class="main_image"
           />
         </template>
-        <template #cell(phones)> </template>
+        <template #cell(cash)="props">
+          {{props.value[$i18n.locale]}}
+        </template>
+        <template #cell(address)="props" style="min-height: 200px">
+          {{props.value[$i18n.locale]}}
+        </template>
+        <template #cell(region)="props">
+          {{props.value[$i18n.locale]}}
+        </template>
+        <template #cell(phones)="props"> 
+          <div v-for="(phone,index) in props.value" :key="index">
+          {{phone}}
+          </div>
+        </template>
         <template #cell(actions)="props">
           <div>
             <BButton
@@ -98,14 +111,14 @@
       </BTable>
       <div class="d-flex justify-content-between flex-wrap">
         <div class="d-flex align-items-center mb-0 mt-1">
-          <span class="text-nowrap">Показать от 1 до</span>
+          <span class="text-nowrap">{{$t('references.home.show')}}</span>
           <BFormSelect
             v-model="filterData.page_size"
             @input="fetchData"
             :options="[10, 20, 30]"
             class="mx-1"
           />
-          <span class="text-nowrap"> строк </span>
+          <span class="text-nowrap">{{$t('references.home.pages')}}</span>
           <!-- из {{ props.total }} -->
         </div>
         <div>
@@ -197,14 +210,14 @@ export default {
         },
       ],
       option: [
-        { title: 'С кешбэком', value: true },
-        { title: 'Без кешбэка', value: false },
+        { ru: 'С кешбэком', uz: 'Cashback bilan', value: true },
+        { ru: 'Без кешбэка', uz: "Keshbek yo'q", value: false },
       ],
       filterData: {
-        search: '',
+        title: '',
         page: 1,
         page_size: 10,
-        cash: true,
+        cash: null,
       },
       fields: [
         {
@@ -223,11 +236,11 @@ export default {
           sortable: true,
         },
         {
-          key: 'region.uz',
+          key: 'region',
           label: 'Район',
         },
         {
-          key: 'address.uz',
+          key: 'address',
           label: 'Адрес',
         },
         {
@@ -263,13 +276,13 @@ export default {
     ...mapActions('shopList', ['FETCH_SHOP_LIST', 'DELETE_SHOP_LIST']),
   
     fetchData() {  //Фильтры
-      let { search,
+      let { title,
       page,
       page_size,
       cash } = this.filterData;
 
       let req = {
-        search,
+        title,
         page,
         page_size,
         cash,
@@ -280,6 +293,7 @@ export default {
         this.FETCH_SHOP_LIST(req);
       }, 500);
     },
+    
     editData(item) {
       this.$router.push(`/second-page/${item.id}`);
     },
@@ -296,6 +310,7 @@ export default {
       });
     },
     onOpenAddShopName() {
+      console.log(this.SHOPLIST.results);
       this.$nextTick(() => {
         this.$bvModal.show('modal-center');
       });

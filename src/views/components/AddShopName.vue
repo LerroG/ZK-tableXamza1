@@ -36,6 +36,10 @@ export default {
     return {
       formData: {
 title: '',
+location: {
+  lat: 41.308513,
+  lng: 69.259016
+}
       }
     }
   },

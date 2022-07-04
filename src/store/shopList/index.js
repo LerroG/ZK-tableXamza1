@@ -4,6 +4,7 @@ import {
   editShopList,
   deleteShopList,
   getOneShopList,
+  getShopRegion,
   getShopList2,
 } from '@/api/shopList';
 
@@ -16,11 +17,18 @@ export default {
     },
     shop: {},
     shoplist_two: [],
+    shop_region:{
+      results:[],
+      count: 0,
+    },
   }),
 
   mutations: {
     SET_SHOP_LIST(state, shoplist) {
       state.shoplist = shoplist;
+    },
+    SET_SHOP_REGION(state, shop_region) {
+      state.shop_region = shop_region;
     },
     SET_SHOP_LIST_TWO(state, shoplist_two) {
       state.shoplist_two = shoplist_two;
@@ -35,6 +43,19 @@ export default {
         getShopList(params)
           .then((res) => {
             commit('SET_SHOP_LIST', res.data);
+            resolve(res.data);
+          })
+          .catch((err) => {
+            console.log(err);
+            reject(err);
+          });
+      });
+    },
+    async FETCH_SHOP_REGION({ commit }, params) {
+      return new Promise((resolve, reject) => {
+        getShopRegion(params)
+          .then((res) => {
+            commit('SET_SHOP_REGION', res.data);
             resolve(res.data);
           })
           .catch((err) => {
@@ -70,6 +91,9 @@ export default {
   getters: {
     SHOPLIST(state) {
       return state.shoplist;
+    },
+    SHOPREGION(state) {
+      return state.shop_region;
     },
     ONESHOP(state) {
       return state.shop;

@@ -5,7 +5,6 @@
       "type_cashback": "Тип",
       "with_cashback": "С кешбэком",
       "without_cashback": "Без кешбэка",
-      "any_cashback": "Любой",
       "add": "Добавить",
       "add_shop": "Добавить магазин",
       "enter_shopname": "Введите название",
@@ -20,7 +19,8 @@
       "work_time": "Время работы",
       "actions": "Действия",
       "show": "Показать от 1 до",
-      "pages": "строк"
+      "pages": "строк",
+      "back":"Назад"
     },
     "second_page": {
       "almazar_district": "Алмазарский район",
@@ -41,10 +41,11 @@
       "select":"Выбрать"
     },
     "work_time": {
+      "day": "День",
       "monday":"Понедельник",
-      "":"Вторник",
-      "":"Среда",
-      "":"Четверг",
+      "tuesday":"Вторник",
+      "wednesday":"Среда",
+      "thursday":"Четверг",
       "friday":"Пятница",
       "saturday":"Суббота",
       "sunday":"Воскресенье"
