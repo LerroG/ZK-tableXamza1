@@ -46,9 +46,9 @@
         :items="SHOPLIST.results"
         class="text-center"
       >
-        <template #cell(main_photo)>
+        <template #cell(main_photo)="props">
           <b-avatar
-            :src="SHOPLIST.results.main_photo"
+            :src="props.value"
             rounded
             class="main_image"
           />
@@ -305,6 +305,7 @@ export default {
     },
     onOpenWorkingHoursModal(e) {
       this.working_time_table = e;
+      console.log(this.SHOPLIST.results);
       this.$nextTick(() => {
         this.$bvModal.show('modal-workingHours');
       });

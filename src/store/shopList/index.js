@@ -4,7 +4,10 @@ import {
   editShopList,
   deleteShopList,
   getOneShopList,
+  getOneShopListPhotos,
+  createSecondPhoto,
   getShopRegion,
+  deleteSecondPhoto,
   getShopList2,
 } from '@/api/shopList';
 
@@ -17,8 +20,8 @@ export default {
     },
     shop: {},
     shoplist_two: [],
-    shop_region:{
-      results:[],
+    shop_region: {
+      results: [],
       count: 0,
     },
   }),
@@ -35,6 +38,9 @@ export default {
     },
     SET_ONE_SHOP_LIST(state, data) {
       state.shop = data;
+    },
+    DELETE_SECOND_PHOTO(state, index) {
+      state.shoplist?.results?.second_photo?.splice(index, 1);
     },
   },
   actions: {
@@ -64,7 +70,7 @@ export default {
           });
       });
     },
-    
+
     async FETCH_ONE_SHOP_LIST({ commit }, id) {
       return new Promise((resolve, reject) => {
         getOneShopList(id)
@@ -78,6 +84,10 @@ export default {
           });
       });
     },
+
+    async FETCH_ONE_SHOP_LIST_PHOTOS({ commit }, id) {
+      return getOneShopListPhotos(id);
+    },
     async ADD_SHOP_LIST({}, params) {
       return createShopList(params);
     },
@@ -87,6 +97,16 @@ export default {
     async DELETE_SHOP_LIST({}, params) {
       return deleteShopList(params);
     },
+    async DELETE_SECOND_PHOTO({ commit }, id) {
+      return deleteSecondPhoto(id);
+      // .then((res) => {
+      //   // commit('DELETE_SECOND_PHOTO', index)
+      // });
+    },
+    async ADD_SECOND_PHOTO({}, params) {
+      return createSecondPhoto(params);
+    },
+
   },
   getters: {
     SHOPLIST(state) {

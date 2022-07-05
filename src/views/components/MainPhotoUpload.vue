@@ -4,7 +4,7 @@
     <BImg id="main_img" fluid :src="dataAvatar" v-else />
     <BRow class="d-flex justify-content-between">
       <!-- <BButton @click="upload">asdasd</BButton> -->
-      <BCol>
+      <BCol cols="6">
         <div class="mt-1 flex-wrap mb-1">
           <BFormFile
             style="width: 100%"
@@ -15,14 +15,14 @@
           />
         </div>
       </BCol>
-      <BCol cols="4" class="d-flex justify-content-end"
+      <!-- <BCol cols="4" class="d-flex justify-content-end"
         ><b-button
           variant="danger"
           class="mt-1"
           @click="clearImage"
           style="height: 36px"
           ><feather-icon icon="Trash2Icon" size="16" /></b-button
-      ></BCol>
+      ></BCol> -->
     </BRow>
     <!-- <BFormFile
         multiple
