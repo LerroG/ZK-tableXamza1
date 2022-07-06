@@ -47,6 +47,7 @@
         class="text-center"
       >
         <template #cell(main_photo)="props">
+          
           <b-avatar
             :src="props.value"
             rounded
@@ -90,7 +91,7 @@
             <BButton
               v-if="item.location"
               class="p-50 mr-1"
-              variant="success"
+              variant="info"
               @click="onOpenLocationModal(item.location)"
             >
               <feather-icon icon="MapPinIcon"></feather-icon>

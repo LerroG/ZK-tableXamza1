@@ -37,8 +37,12 @@
       "yashnabad_district": "Yashnobod tumani",
       "phone_number":"Telefon raqami",
       "submit":"Yuborish",
+      "cancel":"Bekor qilish",
       "file_name":"Fayl nomi",
-      "select":"Tanlang"
+      "select_main_photo":"Asosiy rasmni tanlang",
+      "main_photo":"Asosiy rasm",
+      "select_second_photo":"Qo'shimcha rasmni tanlang",
+      "second_photo":"Qo'shimcha rasmlar"
     },
     "work_time": {
       "day": "Kun",

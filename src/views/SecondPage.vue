@@ -3,22 +3,22 @@
     <BCard>
       <ValidationObserver>
         <BForm>
-          <BRow class="d-flex justify-content-between mt-3" cols="12" xl="12">
+          <BRow class="d-flex justify-content-between mt-3 " cols="12" xl="12">
             <BCol cols="12" md="12" xl="6">
+              <BRow>
+                <BCol class="d-flex justify-content-center mb-2">
               <MainPhotoUpload
                 :dataAvatar="formData.main_photo"
                 :main_photo="formData.main_photo"
                 @changeMain="setMainPhoto"
               />
-              <BRow class="mt-3 mb-3">
-                <BCol class="d-flex justify-content-start">
-                  <!-- <SecondaryPhoto :fileRecords="formData.second_photo"   /> -->
+                </BCol>
+              </BRow>
+              <hr/>
+              <BRow class=" d-flex mt-3 mb-3">
+                <BCol class="d-flex justify-content-center">
 
-                  <SecondPhotoMy
-                    :second_photo.sync="formData.second_photo"
-                    @removePhoto="(v) => (this.formData.second_photo = v)"
-                  />
-                  <!-- :second_photo="formData.second_photo" -->
+                  <SecondPhotoMy :second_photo.sync="formData.second_photo" />
                 </BCol>
               </BRow>
             </BCol>
@@ -38,6 +38,7 @@
                         :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
                         :label="$i18n.locale"
                         :options="option"
+                        :placeholder="$t('references.home.type_cashback')"
                       />
 
                       <small class="text-danger">{{ errors[0] }}</small>
@@ -96,6 +97,7 @@
                         :getOptionLabel="
                           (v) => (v.name && v.name[$i18n.locale]) || ''
                         "
+                      :placeholder="$t('references.home.district')"
                       />
 
                       <small class="text-danger">{{ errors[0] }}</small>
@@ -161,17 +163,19 @@
               </BRow>
               <BRow>
                 <BCol>
-                  <BFormGroup label="Номер телефона:">
+                  <BFormGroup>
+                    <label>{{
+                      $t('references.second_page.phone_number')
+                    }}</label>
                     <ValidationProvider
                       #default="{ errors }"
                       name='"Номер телефона"'
                       rules="required"
                     >
                       <BFormTags
-                        placeholder="Номер телефона"
                         v-model="formData.phones"
                         remove-on-delete
-                        pattern="^[0-9]+$"
+                      :placeholder="$t('references.second_page.phone_number')"
                       />
 
                       <small class="text-danger">{{ errors[0] }}</small>
@@ -193,12 +197,11 @@
             />
             <AddWorkingHours v-else @workDays="setWorkTime" />
           </div>
-          <!-- @workDays="(workDays) => (formData.work_time = workDays)" -->
         </BForm>
         <BRow class="mt-4">
           <BCol class="d-flex justify-content-end" col>
             <BButton variant="outline-danger" class="btn_hover_delete" href="/"
-              >Отменить
+              >{{ $t('references.second_page.cancel') }}
             </BButton>
 
             <BButton
@@ -206,7 +209,7 @@
               variant="outline-primary"
               class="ml-1 btn_hover"
               @click="onSubmit"
-              >Отправить
+              >{{ $t('references.second_page.submit') }}
             </BButton>
           </BCol>
         </BRow>
@@ -216,7 +219,7 @@
 </template>
 
 <script>
-import { required, email } from '@validations';
+import { required } from '@validations';
 import MainPhotoUpload from './components/MainPhotoUpload.vue';
 import SecondaryPhoto from './components/SecondaryPhoto.vue';
 import AddLocationModal from './components/AddLocationModal.vue';
@@ -225,7 +228,6 @@ import AddWorkingHours from './components/AddWorkingHours.vue';
 import SecondPhotoMy from './components/SecondPhotoMy.vue';
 import vSelect from 'vue-select';
 import { mapActions, mapGetters } from 'vuex';
-import convertToFormdata from './convertFormData.js';
 
 import {
   BCard,
@@ -289,10 +291,12 @@ export default {
         {
           key: 'start_time',
           label: 'Открытие',
+          i18n: '',
         },
         {
           key: 'end_time',
           label: 'Закрытие',
+          i18n: '',
         },
       ],
 
@@ -330,7 +334,7 @@ export default {
   mounted() {
     this.fetchOneShopList();
     this.FETCH_ONE_SHOP_LIST_PHOTOS(this.$route.params.id).then((r) => {
-      this.formData.second_photo = r.data;
+      this.formData.second_photo = r.data; // это приходит раньше и ты задаешь картинки переменной
     });
     this.FETCH_SHOP_REGION();
   },
@@ -359,9 +363,9 @@ export default {
       this.formData.work_time = JSON.parse(JSON.stringify(workDays));
     },
 
-    fetchOneShopList() {
+    async fetchOneShopList() {
       let id = this.$route.params.id;
-      this.FETCH_ONE_SHOP_LIST(id).then((res) => {
+      await this.FETCH_ONE_SHOP_LIST(id).then((res) => {
         let {
           title,
           work_time,
@@ -371,19 +375,18 @@ export default {
           region,
           cash,
           main_photo,
-          second_photo,
         } = res;
 
         this.formData = {
+          ...this.formData,
           title,
           work_time,
           location,
           address,
           phones,
-          region: region.id,
+          region: region && region.id,
           cash,
           main_photo,
-          second_photo,
         };
 
         // this.formData = JSON.parse(JSON.stringify(this.ONESHOP));
@@ -396,8 +399,6 @@ export default {
       });
     },
     onOpenWorkingHoursModal() {
-      // console.log(this.ONESHOP.work_time);
-      console.log(this.cash);
       this.$nextTick(() => {
         this.$bvModal.show('modal-workHours');
       });
@@ -446,15 +447,13 @@ export default {
       req.append('location', JSON.stringify(location));
       req.append('work_time', JSON.stringify(work_time));
       req.append('phones', JSON.stringify(phones));
-      // console.log(this.cash);
 
       this.EDIT_SHOP_LIST(req)
         .then(() => {
           this.$router.push('/');
-          console.log('OK');
         })
         .catch((err) => {
-          console.log('NO', err);
+          console.log( err);
         });
     },
   },

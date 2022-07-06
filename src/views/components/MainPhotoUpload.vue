@@ -1,13 +1,18 @@
 <template>
-  <BContainer class="mt-2">
-    <BImg id="main_img" fluid :src="dataAvatar" v-if="dataAvatar" />
-    <BImg id="main_img" fluid :src="dataAvatar" v-else />
-    <BRow class="d-flex justify-content-between">
-      <!-- <BButton @click="upload">asdasd</BButton> -->
+  <BContainer class="mt-2" style="width: 100%;">
+    <BRow>
+    <BCol xl>
+    <div v-if="dataAvatar"><BImg id="main_img" rounded :src="dataAvatar"  /></div>
+    <div class="div-photo  d-flex justify-content-center align-items-center" v-else> <span class="main-photo mb-2"><strong>{{ $t('references.second_page.main_photo')}}</strong></span></div>
+    </BCol>
+    </BRow>
+    <BRow class="d-flex justify-content-center ml-4">
       <BCol cols="6">
         <div class="mt-1 flex-wrap mb-1">
+          <span class="load_file p-50">
+                     {{ $t('references.second_page.select_main_photo')}}</span>
           <BFormFile
-            style="width: 100%"
+            style="width: 75%; opacity: 0; z-index: 2;"
             v-model="main_photo"
             placeholder="Имя файла"
             browseText="Выбрать"
@@ -24,15 +29,6 @@
           ><feather-icon icon="Trash2Icon" size="16" /></b-button
       ></BCol> -->
     </BRow>
-    <!-- <BFormFile
-        multiple
-        v-model="files"
-        placeholder="Имя файла"
-        browseText="Выбрать"
-        
-      /> -->
-
-    <!-- <b-button variant="danger" class="mt-1" @click="upload">upload</b-button> -->
   </BContainer>
 </template>
 
@@ -91,20 +87,6 @@ export default {
       this.dataAvatar = null;
       this.formData.main_photo = null;
     },
-    // upload() {
-    //   // this.$emit('changeMain', this.main_photo);
-    //   // let { main_photo } = this.formData;
-    //   // let req = new FormData();
-    //   // req.append('main_photo', main_photo);
-    //   // console.log(req);
-    //   // this.ADD_SHOP_LIST(req)
-    //   //   .then(() => {
-    //   //     console.log('Не сосать');
-    //   //   })
-    //   //   .catch(() => {
-    //   //     console.log('Cосать');
-    //   //   })
-    // },
   },
 };
 </script>
@@ -114,5 +96,23 @@ export default {
   width: 100%;
   height: 100%;
   object-fit: fill;
+}
+.div-photo{
+  width: 100%;
+  height: 20em;
+  border: 1px solid grey;
+  border-radius: 0.3em;
+  background-color: #f4f4f4;
+  }
+.main-photo{
+  font-size: 2em;
+  }
+.load_file {
+  width: 70%;
+  border: 1px solid rgb(216, 216, 216);
+  border-radius: 4px;
+  position: absolute;
+  text-align: center;
+  z-index: 1;
 }
 </style>

@@ -37,8 +37,12 @@
       "yashnabad_district": "Яшнабадский район",
       "phone_number":"Номер телефона",
       "submit":"Отправить",
+      "cancel":"Отменить",
       "file_name":"Имя файла",
-      "select":"Выбрать"
+      "select_main_photo":"Выберите главное фото",
+      "main_photo":"Главное фото",
+      "select_second_photo":"Выберите дополнительные фото",
+      "second_photo":"Дополнительные фото"
     },
     "work_time": {
       "day": "День",
