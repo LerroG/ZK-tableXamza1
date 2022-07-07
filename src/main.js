@@ -9,6 +9,7 @@ import router from './router'
 import store from './store'
 import App from './App.vue'
 import i18n from "@/libs/i18n";
+import notify from "@/mixins/notify";
 
 // Global Components
 import './global-components'
@@ -24,6 +25,9 @@ Vue.use(ModalPlugin)
 // Composition API
 Vue.use(VueCompositionAPI)
 Vue.use(VueFileAgent);
+
+// подключаю миксин уведомлений
+Vue.mixin(notify);
 
 // import core styles
 require('@core/scss/core.scss')

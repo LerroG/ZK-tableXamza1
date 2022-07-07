@@ -2,7 +2,7 @@
   <BContainer class="mt-2" style="width: 100%;">
     <BRow>
     <BCol xl>
-    <div v-if="dataAvatar"><BImg id="main_img" rounded :src="dataAvatar"  /></div>
+    <div v-if="photo64"><BImg id="main_img" rounded :src="photo64"  /></div>
     <div class="div-photo  d-flex justify-content-center align-items-center" v-else> <span class="main-photo mb-2"><strong>{{ $t('references.second_page.main_photo')}}</strong></span></div>
     </BCol>
     </BRow>
@@ -13,7 +13,7 @@
                      {{ $t('references.second_page.select_main_photo')}}</span>
           <BFormFile
             style="width: 75%; opacity: 0; z-index: 2;"
-            v-model="main_photo"
+            v-model="photo"
             placeholder="Имя файла"
             browseText="Выбрать"
             @input="fileInput"
@@ -58,7 +58,8 @@ export default {
   },
   data() {
     return {
-      // main_photo: null,
+      photo: this.main_photo,
+      photo64: null,
     };
   },
   props: {
@@ -72,16 +73,17 @@ export default {
     },
   },
   watch: {
-    main_photo(value) {
-      this.$emit('changeMain', this.main_photo);
+    photo(value) {
+      this.$emit('changeMain', value);
     },
+    
   },
   methods: {
     ...mapActions('shopList', ['ADD_SHOP_LIST']),
     fileInput(file) {
       let reader = new FileReader();
       reader.readAsDataURL(file);
-      reader.onload = () => (this.dataAvatar = reader.result);
+      reader.onload = () => (this.photo64 = reader.result);
     },
     clearImage() {
       this.dataAvatar = null;

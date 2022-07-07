@@ -15,8 +15,14 @@
         </b-link>
       </li>
     </ul>
-
     <!-- Left Col -->
+    <!-- <div>
+<BRow>
+<BCol >
+<AppBreadcrumb />
+</BCol>
+</BRow>
+    </div> -->
     <div class="bookmark-wrapper align-items-center flex-grow-1  d-none d-flex justify-content-end">
       <dark-Toggler class="d-none d-lg-block d-md-block d-sm-block " />
     <div class="nav d-flex">
@@ -100,10 +106,11 @@
 
 <script>
 import {
-  BLink, BNavbarNav, BNavItemDropdown, BDropdownItem, BDropdownDivider, BAvatar,
+  BLink, BNavbarNav, BNavItemDropdown, BDropdownItem, BDropdownDivider, BAvatar, BRow, BCol
 } from 'bootstrap-vue'
 import DarkToggler from '@core/layouts/components/app-navbar/components/DarkToggler.vue'
 import Locale from "@/@core/layouts/components/app-navbar/components/Locale.vue";
+import AppBreadcrumb from '@core/layouts/components/AppBreadcrumb.vue'
 
 export default {
   components: {
@@ -113,10 +120,13 @@ export default {
     BDropdownItem,
     BDropdownDivider,
     BAvatar,
+    BRow,
+    BCol,
 
     // Navbar Components
     DarkToggler,
     Locale,
+    AppBreadcrumb,
   },
   props: {
     toggleVerticalMenuActive: {

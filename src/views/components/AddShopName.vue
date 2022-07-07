@@ -3,17 +3,21 @@
     <BModal
       id="modal-center"
       centered
-      title="Добавить магазин"
-      cancel-title="Отмена"
-      ok-title="Сохранить"
+      :title="$t('references.home.add_shop')"
+      :cancel-title="$t('references.home.cancel')"
+      :ok-title="$t('references.home.add')"
       @ok.prevent="saveEdit"
     >
-      <BFormGroup label="Введите название" label-for="basicInput">
-        <BFormInput
-          id="basicInput"
-          placeholder="Название"
-          v-model="formData.title"
-        />
+      <BFormGroup>
+        <label>{{$t('references.home.enter_shopname')}}</label>
+        <ValidationProvider #default="{ errors }" name='"Название"' rules="required">
+          <BFormInput
+            id="basicInput"
+            :placeholder="$t('references.home.title')"
+            v-model="formData.title"
+          />
+          <small class="text-danger">{{ errors[0] }}</small>
+        </ValidationProvider>
       </BFormGroup>
     </BModal>
   </div>
@@ -67,10 +71,11 @@ export default {
       };
       this.ADD_SHOP_LIST(req)
         .then((req) => {
+          this.$_okToast();
           this.$router.push(`/second-page/${req.data.id}`);
-          console.log(req);
         })
         .catch((err) => {
+          this.$_errorToast();
           console.log(err);
         });
     },

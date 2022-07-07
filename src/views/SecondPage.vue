@@ -1,23 +1,22 @@
 <template>
   <div>
     <BCard>
-      <ValidationObserver>
-        <BForm>
-          <BRow class="d-flex justify-content-between mt-3 " cols="12" xl="12">
+      <ValidationObserver v-slot="{ handleSubmit }">
+        <BForm @submit.prevent="handleSubmit(onSubmit)">
+          <BRow class="d-flex justify-content-between mt-3" cols="12" xl="12">
             <BCol cols="12" md="12" xl="6">
               <BRow>
                 <BCol class="d-flex justify-content-center mb-2">
-              <MainPhotoUpload
-                :dataAvatar="formData.main_photo"
-                :main_photo="formData.main_photo"
-                @changeMain="setMainPhoto"
-              />
+                  <MainPhotoUpload
+                    :dataAvatar="formData.main_photo"
+                    :main_photo="formData.main_photo"
+                    @changeMain="setMainPhoto"
+                  />
                 </BCol>
               </BRow>
-              <hr/>
-              <BRow class=" d-flex mt-3 mb-3">
+              <hr />
+              <BRow class="d-flex mt-3 mb-3">
                 <BCol class="d-flex justify-content-center">
-
                   <SecondPhotoMy :second_photo.sync="formData.second_photo" />
                 </BCol>
               </BRow>
@@ -97,7 +96,7 @@
                         :getOptionLabel="
                           (v) => (v.name && v.name[$i18n.locale]) || ''
                         "
-                      :placeholder="$t('references.home.district')"
+                        :placeholder="$t('references.home.district')"
                       />
 
                       <small class="text-danger">{{ errors[0] }}</small>
@@ -175,7 +174,7 @@
                       <BFormTags
                         v-model="formData.phones"
                         remove-on-delete
-                      :placeholder="$t('references.second_page.phone_number')"
+                        :placeholder="$t('references.second_page.phone_number')"
                       />
 
                       <small class="text-danger">{{ errors[0] }}</small>
@@ -334,7 +333,7 @@ export default {
   mounted() {
     this.fetchOneShopList();
     this.FETCH_ONE_SHOP_LIST_PHOTOS(this.$route.params.id).then((r) => {
-      this.formData.second_photo = r.data; // это приходит раньше и ты задаешь картинки переменной
+      this.formData.second_photo = r.data;
     });
     this.FETCH_SHOP_REGION();
   },
@@ -417,26 +416,25 @@ export default {
         phones,
       } = this.formData;
 
-      let secondPhoto = new FormData();
-      secondPhoto.append('mark', this.$route.params.id);
+      // let secondPhoto = new FormData();
+      // secondPhoto.append('mark', this.$route.params.id);
       // second_photo.forEach((item) => {
 
       //   secondPhoto.append('image', JSON.stringify(item))
       // })
+      let image = new FormData();
       second_photo.forEach((item) => {
-        secondPhoto.append('image', item.binary);
-      });
+        // secondPhoto.append('image', item.binary);
+        if (item.binary) {
+        image.append("image", item.binary)
+        image.append("mark", this.$route.params.id)
+        this.ADD_SECOND_PHOTO(image);
+        image = new FormData();
+        }
 
-      this.ADD_SECOND_PHOTO(secondPhoto);
+      });
       let req = new FormData();
       req.append('id', this.$route.params.id);
-
-      // if (typeof second_photo != 'string' && second_photo.lenght) {
-      //   second_photo.forEach((item) => {
-      //     req.append('second_photo', item.file);
-      //   });
-      // }
-      // else{second = second_photo && second_photo.lenght == 0}
       if (typeof main_photo != 'string' && main_photo != null) {
         req.append('main_photo', main_photo);
       }
@@ -450,10 +448,12 @@ export default {
 
       this.EDIT_SHOP_LIST(req)
         .then(() => {
+          this.$_okToast();
           this.$router.push('/');
         })
         .catch((err) => {
-          console.log( err);
+          this.$_errorToast()
+          console.log(err);
         });
     },
   },

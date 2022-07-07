@@ -23,6 +23,7 @@
               :options="option"
               @input="fetchData"
               :reduce="(f) => f.value"
+              :placeholder="$t('references.home.type_cashback')"
             />
           </BFormGroup>
         </BCol>
